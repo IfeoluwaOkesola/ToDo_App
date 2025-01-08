@@ -16,6 +16,8 @@ const typeorm_1 = require("@nestjs/typeorm");
 const datasource_1 = require("./database/datasource");
 const core_1 = require("@nestjs/core");
 const error_handler_1 = require("./error/error.handler");
+const user_module_1 = require("./user/user.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -27,6 +29,8 @@ exports.AppModule = AppModule = __decorate([
                 load: [config_service_1.config],
             }),
             typeorm_1.TypeOrmModule.forRoot(datasource_1.dataSourceOptions),
+            user_module_1.UserModule,
+            auth_module_1.AuthModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [

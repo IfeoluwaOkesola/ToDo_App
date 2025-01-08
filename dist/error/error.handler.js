@@ -5,88 +5,40 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var CustomErrorFilter_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomErrorFilter = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("typeorm");
-let CustomErrorFilter = class CustomErrorFilter {
-    catch(error, host) {
+let CustomErrorFilter = CustomErrorFilter_1 = class CustomErrorFilter {
+    constructor() {
+        this.logger = new common_1.Logger(CustomErrorFilter_1.name);
+    }
+    catch(exception, host) {
         const ctx = host.switchToHttp();
-        const request = ctx.getRequest();
         const response = ctx.getResponse();
-        const logger = new common_1.Logger();
-        const message = error.getResponse().message;
-        if (error instanceof common_1.NotFoundException) {
-            logger.log(error.message);
-            const message = error.message.includes(request.path)
-                ? 'Route not found'
-                : error.message;
-            return response.status(404).json({
-                status: 404,
-                message: message,
-                path: request.path,
+        if (exception instanceof common_1.HttpException) {
+            const status = exception.getStatus();
+            const message = exception.getResponse();
+            this.logger.warn(`Handled Error: ${JSON.stringify(message)}`);
+            response.status(status).json({
+                statusCode: status,
+                message: message['message'] || message,
+                error: exception.name,
                 timestamp: new Date().toISOString(),
-                error: 'Not Found',
             });
         }
-        if (error instanceof common_1.BadRequestException) {
-            if (typeof message === 'object') {
-                const responseMessage = message.map((data) => {
-                    const errors = [];
-                    for (const key of Object.keys(data.constraints)) {
-                        errors.push(data.constraints[key]);
-                    }
-                    return {
-                        field: data.property,
-                        errors,
-                    };
-                });
-                return response.status(404).json({
-                    status: 400,
-                    message: responseMessage,
-                    path: request.path,
-                    timestamp: new Date().toISOString(),
-                    error: 'Bad Request',
-                });
-            }
-            return response.status(404).json({
-                status: 400,
-                message: message,
-                path: request.path,
+        else {
+            this.logger.error('Unhandled Error:', exception);
+            response.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'An unexpected error occurred',
                 timestamp: new Date().toISOString(),
-                error: 'Bad Request',
             });
         }
-        if (error instanceof common_1.UnauthorizedException) {
-            logger.log(error.message);
-            return response.status(404).json({
-                status: 401,
-                message: message,
-                path: request.path,
-                timestamp: new Date().toISOString(),
-                error: 'Unauthorized',
-            });
-        }
-        if (error instanceof typeorm_1.QueryFailedError) {
-            logger.log(error.message);
-            return response.status(404).json({
-                status: 500,
-                message: message,
-                path: request.path,
-                timestamp: new Date().toISOString(),
-                error: 'Internal server error',
-            });
-        }
-        logger.error(error.message, error.stack);
-        response.status(500).json({
-            status: 500,
-            message: 'Internal server error',
-            timestamp: new Date(Date.now()).toISOString(),
-        });
     }
 };
 exports.CustomErrorFilter = CustomErrorFilter;
-exports.CustomErrorFilter = CustomErrorFilter = __decorate([
-    (0, common_1.Catch)(common_1.HttpException)
+exports.CustomErrorFilter = CustomErrorFilter = CustomErrorFilter_1 = __decorate([
+    (0, common_1.Catch)()
 ], CustomErrorFilter);
 //# sourceMappingURL=error.handler.js.map

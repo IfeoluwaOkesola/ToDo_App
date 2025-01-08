@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/datasource';
 import { APP_FILTER } from '@nestjs/core';
 import { CustomErrorFilter } from './error/error.handler';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { CustomErrorFilter } from './error/error.handler';
       load: [config],
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [
