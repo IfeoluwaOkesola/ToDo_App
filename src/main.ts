@@ -20,7 +20,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('/v1', app, document);
 
-  app.useGlobalFilters( new CustomErrorFilter());
+  app.useGlobalFilters(new CustomErrorFilter());
   await app.listen(config().PORT.APP_PORT, () => {
     logger.log(`Server started on ${config().PORT.APP_PORT}`);
   });

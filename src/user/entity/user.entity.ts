@@ -1,4 +1,13 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Todo } from 'src/todo/entity/todo.entity';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity({ name: 'users' })
 export class Users extends BaseEntity {
@@ -13,6 +22,9 @@ export class Users extends BaseEntity {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Todo, (todo) => todo.user)
+  todos: Todo[];
 
   @CreateDateColumn()
   createdAt: Date;

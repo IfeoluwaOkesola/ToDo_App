@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const sign_up_dto_1 = require("./dto/sign-up.dto");
 const swagger_1 = require("@nestjs/swagger");
 const login_dto_1 = require("./dto/login.dto");
+const auth_middleware_1 = require("../shared/middleware/auth.middleware");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -31,6 +32,7 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
+    (0, auth_middleware_1.Public)(),
     (0, common_1.Post)('/signup'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -38,6 +40,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUpUser", null);
 __decorate([
+    (0, auth_middleware_1.Public)(),
     (0, common_1.Post)('/login'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),

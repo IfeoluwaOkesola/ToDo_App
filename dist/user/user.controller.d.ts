@@ -1,2 +1,1 @@
-export declare class UserController {
-}
+export declare class UserController {}

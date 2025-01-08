@@ -20,13 +20,13 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
-  async signUp(signUpDto: SignUpDto){
-      const { email, password , fullname} = signUpDto;
+  async signUp(signUpDto: SignUpDto) {
+    const { email, password, fullname } = signUpDto;
 
     const userExist = await this.userService.findUserByEmail(email);
 
     if (userExist) {
-      throw new ConflictException('user already exist')
+      throw new ConflictException('user already exist');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -44,33 +44,29 @@ export class AuthService {
     });
 
     return {
-      statusCode: HttpStatus.CREATED, 
+      statusCode: HttpStatus.CREATED,
       message: 'User successfully registered',
       token,
       user: {
         id: user.id,
         email: user.email,
-        fullname:user.fullname
+        fullname: user.fullname,
       },
     };
-   
   }
 
-  async login(loginDto: LoginDto){
+  async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    
     const user = await this.userService.findUserByEmail(email);
     if (!user) {
       throw new BadRequestException('invalid email or password');
     }
 
-    
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new BadRequestException('invalid email or password');
     }
-
 
     const payload = { id: user.id };
     const token = await this.jwtService.signAsync(payload, {
@@ -78,7 +74,6 @@ export class AuthService {
       expiresIn: this.configService.get<string>('JWT_EXPIRES'),
     });
 
-    
     return {
       // status: HttpStatus.OK,
       // message: 'Login successful',
@@ -89,5 +84,4 @@ export class AuthService {
       },
     };
   }
-
 }

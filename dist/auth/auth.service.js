@@ -45,7 +45,7 @@ let AuthService = class AuthService {
             user: {
                 id: user.id,
                 email: user.email,
-                fullname: user.fullname
+                fullname: user.fullname,
             },
         };
     }
