@@ -53,9 +53,7 @@ export class TodoController {
     @GetUser() user: Users,
     @Query() getTodosDto?: GetTodosDto,
   ): Promise<Todo[]> {
-    console.log('td==', getTodosDto, pagination);
-
-    console.log('user==', user);
+    
     return this.todoService.findAll(pagination, user, getTodosDto);
   }
 

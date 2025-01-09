@@ -25,9 +25,7 @@ export class TodoService {
     user: Users,
     getTodosDto?: GetTodosDto,
   ): Promise<Todo[]> {
-    console.log('td==', getTodosDto);
-
-    console.log('user==', user);
+   
     const { search, order, status } = getTodosDto;
 
     const { page, pageSize } = pagination;
@@ -75,12 +73,10 @@ export class TodoService {
     updateTodoDto: UpdateTodoDto,
     user: Users,
   ): Promise<Todo> {
-    console.log('id==', id, user.id);
-
-    console.log('user', user);
+    
     const verify = await this.todoRepository.findOne({ id }, { user: true });
 
-    console.log(verify);
+    
     if (verify?.user?.id !== user.id) {
       throw new UnauthorizedException('You do not have permission');
     }
@@ -95,11 +91,17 @@ export class TodoService {
 
   async remove(id: string, user: Users) {
     const todo = await this.todoRepository.findOne({ id }, { user: true });
-    if (todo && todo.user.id === user.id) {
-      await this.todoRepository.delete({ id });
-    }
+    if (!todo) {
+      throw new NotFoundException('Todo not found');
+  }
 
-    return todo;
+  if (todo.user.id !== user.id) {
+      throw new UnauthorizedException('You do not have permission to delete this todo');
+  }
+
+  await this.todoRepository.delete({ id });
+
+  return { message: 'Todo successfully deleted', id };
   }
 
   async markAsComplete(id: string, user: Users): Promise<Todo> {
